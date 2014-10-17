@@ -380,7 +380,6 @@ class AdminController extends Controller {
      *                              请求参数中如果指定了_order和_field则据此排序(优先级第二);
      *                              否则使用$order参数(如果$order参数,且模型也没有设定过order,则取主键降序);
      *
-     * @param array        $base    基本的查询条件
      * @param boolean      $field   单表模型用不到该参数,要用在多表join时为field()方法指定参数
      * @author 朱亚杰 <xcoolcc@gmail.com>
      *
@@ -443,7 +442,8 @@ class AdminController extends Controller {
      * @param integer $model_id 模型id
      */
     protected function parseDocumentList($list,$model_id=null){
-        $attrList = get_model_attribute($model_id ? $model_id : 1,false,'id,name,type,extra');
+        $model_id = $model_id ? $model_id : 1;
+        $attrList = get_model_attribute($model_id,false,'id,name,type,extra');
         // 对列表数据进行显示处理
         if(is_array($list)){
             foreach ($list as $k=>$data){
@@ -456,7 +456,7 @@ class AdminController extends Controller {
                             $options    =   parse_field_attr($extra);
                             if($options && array_key_exists($val,$options)) {
                                 $data[$key]    =   $options[$val];
-                            }                        
+                            }
                         }elseif('date'==$type){ // 日期型
                             $data[$key]    =   date('Y-m-d',$val);
                         }elseif('datetime' == $type){ // 时间型
@@ -464,6 +464,7 @@ class AdminController extends Controller {
                         }
                     }
                 }
+                $data['model_id'] = $model_id;
                 $list[$k]   =   $data;
             }
         }

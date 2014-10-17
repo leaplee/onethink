@@ -19,7 +19,7 @@ function get_list_field($data, $grid){
     // 获取当前字段数据
     foreach($grid['field'] as $field){
         $array  =   explode('|',$field);
-        $temp  =	$data[$array[0]];
+        $temp  =    $data[$array[0]];
         // 函数支持
         if(isset($array[1])){
             $temp = call_user_func($array[1], $temp);
@@ -33,6 +33,10 @@ function get_list_field($data, $grid){
     }
 
     // 链接支持
+    if('title' == $grid['field'][0] && '目录' == $data['type'] ){
+        // 目录类型自动设置子文档列表链接
+        $grid['href']   =   '[LIST]';
+    }
     if(!empty($grid['href'])){
         $links  =   explode(',',$grid['href']);
         foreach($links as $link){
@@ -45,15 +49,15 @@ function get_list_field($data, $grid){
                 // 替换系统特殊字符串
                 $href   =   str_replace(
                     array('[DELETE]','[EDIT]','[LIST]'),
-                    array('del?ids=[id]&model=[model_id]',
+                    array('setstatus?status=-1&ids=[id]',
                     'edit?id=[id]&model=[model_id]&cate_id=[category_id]',
                     'index?pid=[id]&model=[model_id]&cate_id=[category_id]'),
                     $href);
 
                 // 替换数据变量
-                $href	=	preg_replace_callback('/\[([a-z_]+)\]/', function($match) use($data){return $data[$match[1]];}, $href);
+                $href   =   preg_replace_callback('/\[([a-z_]+)\]/', function($match) use($data){return $data[$match[1]];}, $href);
 
-                $val[]	=	'<a href="'.U($href).'">'.$show.'</a>';
+                $val[]  =   '<a href="'.U($href).'">'.$show.'</a>';
             }
         }
         $value  =   implode(' ',$val);
@@ -61,12 +65,7 @@ function get_list_field($data, $grid){
     return $value;
 }
 
-/**
- * 后台公共文件
- * 主要定义后台公共函数库
- */
-
-/* 解析列表定义规则*/
+/* 解析插件数据列表定义规则*/
 
 function get_addonlist_field($data, $grid,$addon){
     // 获取当前字段数据
@@ -161,7 +160,7 @@ function show_status_op($status) {
     switch ($status){
         case 0  : return    '启用';     break;
         case 1  : return    '禁用';     break;
-        case 2  : return    '审核';		break;
+        case 2  : return    '审核';       break;
         default : return    false;      break;
     }
 }
@@ -261,7 +260,7 @@ function get_parent_category($cid){
         return false;
     }
     $cates  =   M('Category')->where(array('status'=>1))->field('id,title,pid')->order('sort')->select();
-    $child  =   get_category($cid);	//获取参数分类的信息
+    $child  =   get_category($cid); //获取参数分类的信息
     $pid    =   $child['pid'];
     $temp   =   array();
     $res[]  =   $child;
@@ -269,7 +268,7 @@ function get_parent_category($cid){
         foreach ($cates as $key=>$cate){
             if($cate['id'] == $pid){
                 $pid = $cate['pid'];
-                array_unshift($res, $cate);	//将父分类插入到数组第一个元素前
+                array_unshift($res, $cate); //将父分类插入到数组第一个元素前
             }
         }
         if($pid == 0){
@@ -379,15 +378,15 @@ function parse_field_attr($string) {
  * @author huajie <banhuajie@163.com>
  */
 function get_action($id = null, $field = null){
-	if(empty($id) && !is_numeric($id)){
-		return false;
-	}
-	$list = S('action_list');
-	if(empty($list[$id])){
-		$map = array('status'=>array('gt', -1), 'id'=>$id);
-		$list[$id] = M('Action')->where($map)->field(true)->find();
-	}
-	return empty($field) ? $list[$id] : $list[$id][$field];
+    if(empty($id) && !is_numeric($id)){
+        return false;
+    }
+    $list = S('action_list');
+    if(empty($list[$id])){
+        $map = array('status'=>array('gt', -1), 'id'=>$id);
+        $list[$id] = M('Action')->where($map)->field(true)->find();
+    }
+    return empty($field) ? $list[$id] : $list[$id][$field];
 }
 
 /**
@@ -398,19 +397,19 @@ function get_action($id = null, $field = null){
  * @author huajie <banhuajie@163.com>
  */
 function get_document_field($value = null, $condition = 'id', $field = null){
-	if(empty($value)){
-		return false;
-	}
+    if(empty($value)){
+        return false;
+    }
 
-	//拼接参数
-	$map[$condition] = $value;
-	$info = M('Model')->where($map);
-	if(empty($field)){
-		$info = $info->field(true)->find();
-	}else{
-		$info = $info->getField($field);
-	}
-	return $info;
+    //拼接参数
+    $map[$condition] = $value;
+    $info = M('Model')->where($map);
+    if(empty($field)){
+        $info = $info->field(true)->find();
+    }else{
+        $info = $info->getField($field);
+    }
+    return $info;
 }
 
 /**
@@ -420,12 +419,12 @@ function get_document_field($value = null, $condition = 'id', $field = null){
  * @author huajie <banhuajie@163.com>
  */
 function get_action_type($type, $all = false){
-	$list = array(
-		1=>'系统',
-		2=>'用户',
-	);
-	if($all){
-		return $list;
-	}
-	return $list[$type];
+    $list = array(
+        1=>'系统',
+        2=>'用户',
+    );
+    if($all){
+        return $list;
+    }
+    return $list[$type];
 }

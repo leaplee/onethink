@@ -130,13 +130,13 @@ CREATE TABLE `onethink_attribute` (
   `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态',
   `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
-  `validate_rule` varchar(255) NOT NULL,
-  `validate_time` tinyint(1) unsigned NOT NULL,
-  `error_info` varchar(100) NOT NULL,
-  `validate_type` varchar(25) NOT NULL,
-  `auto_rule` varchar(100) NOT NULL,
-  `auto_time` tinyint(1) unsigned NOT NULL,
-  `auto_type` varchar(25) NOT NULL,
+  `validate_rule` varchar(255) NOT NULL DEFAULT '',
+  `validate_time` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `error_info` varchar(100) NOT NULL DEFAULT '',
+  `validate_type` varchar(25) NOT NULL DEFAULT '',
+  `auto_rule` varchar(100) NOT NULL DEFAULT '',
+  `auto_time` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `auto_type` varchar(25) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
     KEY `model_id` (`model_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8 COMMENT='模型属性表';
@@ -208,8 +208,8 @@ INSERT INTO `onethink_auth_extend` VALUES ('1', '37', '1');
 DROP TABLE IF EXISTS `onethink_auth_group`;
 CREATE TABLE `onethink_auth_group` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户组id,自增主键',
-  `module` varchar(20) NOT NULL COMMENT '用户组所属模块',
-  `type` tinyint(4) NOT NULL COMMENT '组类型',
+  `module` varchar(20) NOT NULL DEFAULT '' COMMENT '用户组所属模块',
+  `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '组类型',
   `title` char(20) NOT NULL DEFAULT '' COMMENT '用户组中文名称',
   `description` varchar(80) NOT NULL DEFAULT '' COMMENT '描述信息',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户组状态：为1正常，为0禁用,-1为删除',
@@ -483,10 +483,10 @@ CREATE TABLE `onethink_category` (
   `meta_title` varchar(50) NOT NULL DEFAULT '' COMMENT 'SEO的网页标题',
   `keywords` varchar(255) NOT NULL DEFAULT '' COMMENT '关键字',
   `description` varchar(255) NOT NULL DEFAULT '' COMMENT '描述',
-  `template_index` varchar(100) NOT NULL COMMENT '频道页模板',
-  `template_lists` varchar(100) NOT NULL COMMENT '列表页模板',
-  `template_detail` varchar(100) NOT NULL COMMENT '详情页模板',
-  `template_edit` varchar(100) NOT NULL COMMENT '编辑页模板',
+  `template_index` varchar(100) NOT NULL DEFAULT '' COMMENT '频道页模板',
+  `template_lists` varchar(100) NOT NULL DEFAULT '' COMMENT '列表页模板',
+  `template_detail` varchar(100) NOT NULL DEFAULT '' COMMENT '详情页模板',
+  `template_edit` varchar(100) NOT NULL DEFAULT '' COMMENT '编辑页模板',
   `model` varchar(100) NOT NULL DEFAULT '' COMMENT '列表绑定模型',
   `model_sub` varchar(100) NOT NULL DEFAULT '' COMMENT '子文档绑定模型',
   `type` varchar(100) NOT NULL DEFAULT '' COMMENT '允许发布的内容类型',
@@ -501,6 +501,7 @@ CREATE TABLE `onethink_category` (
   `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据状态',
   `icon` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '分类图标',
+  `groups` varchar(255) NOT NULL DEFAULT '' COMMENT '分组定义',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`),
   KEY `pid` (`pid`)
@@ -509,8 +510,8 @@ CREATE TABLE `onethink_category` (
 -- -----------------------------
 -- Records of `onethink_category`
 -- -----------------------------
-INSERT INTO `onethink_category` VALUES ('1', 'blog', '博客', '0', '0', '10', '', '', '', '', '', '', '', '2,3','2', '2,1', '0', '0', '1', '0', '0', '1', '', '1379474947', '1382701539', '1', '0');
-INSERT INTO `onethink_category` VALUES ('2', 'default_blog', '默认分类', '1', '1', '10', '', '', '', '', '', '', '', '2,3','2', '2,1,3', '0', '1', '1', '0', '1', '1', '', '1379475028', '1386839751', '1', '0');
+INSERT INTO `onethink_category` VALUES ('1', 'blog', '博客', '0', '0', '10', '', '', '', '', '', '', '', '2,3','2', '2,1', '0', '0', '1', '0', '0', '1', '', '1379474947', '1382701539', '1', '0','');
+INSERT INTO `onethink_category` VALUES ('2', 'default_blog', '默认分类', '1', '1', '10', '', '', '', '', '', '', '', '2,3','2', '2,1,3', '0', '1', '1', '0', '1', '1', '', '1379475028', '1386839751', '1', '0','');
 
 -- -----------------------------
 -- Table structure for `onethink_channel`
@@ -548,7 +549,7 @@ CREATE TABLE `onethink_config` (
   `title` varchar(50) NOT NULL DEFAULT '' COMMENT '配置说明',
   `group` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '配置分组',
   `extra` varchar(255) NOT NULL DEFAULT '' COMMENT '配置值',
-  `remark` varchar(100) NOT NULL COMMENT '配置说明',
+  `remark` varchar(100) NOT NULL DEFAULT '' COMMENT '配置说明',
   `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态',
@@ -601,6 +602,7 @@ CREATE TABLE `onethink_document` (
   `name` char(40) NOT NULL DEFAULT '' COMMENT '标识',
   `title` char(80) NOT NULL DEFAULT '' COMMENT '标题',
   `category_id` int(10) unsigned NOT NULL COMMENT '所属分类',
+  `group_id` smallint(3) unsigned NOT NULL COMMENT '所属分组',
   `description` char(140) NOT NULL DEFAULT '' COMMENT '描述',
   `root` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '根节点',
   `pid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '所属ID',
@@ -627,7 +629,7 @@ CREATE TABLE `onethink_document` (
 -- -----------------------------
 -- Records of `onethink_document`
 -- -----------------------------
-INSERT INTO `onethink_document` VALUES ('1', '1', '', 'OneThink1.1开发版发布', '2', '期待已久的OneThink最新版发布', '0', '0', '2', '2', '0', '0', '0', '1', '0', '0', '8', '0', '0', '0', '1406001413', '1406001413', '1');
+INSERT INTO `onethink_document` VALUES ('1', '1', '', 'OneThink1.1开发版发布', '2', '0','期待已久的OneThink最新版发布', '0', '0', '2', '2', '0', '0', '0', '1', '0', '0', '8', '0', '0', '0', '1406001413', '1406001413', '1');
 
 -- -----------------------------
 -- Table structure for `onethink_document_article`
@@ -679,7 +681,7 @@ CREATE TABLE `onethink_file` (
   `sha1` char(40) NOT NULL DEFAULT '' COMMENT '文件 sha1编码',
   `location` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '文件保存位置',
   `url` varchar(255) NOT NULL DEFAULT '' COMMENT '远程地址',
-  `create_time` int(10) unsigned NOT NULL COMMENT '上传时间',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上传时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_md5` (`md5`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文件表';
@@ -885,6 +887,7 @@ CREATE TABLE `onethink_model` (
   `field_sort` text NULL  COMMENT '表单字段排序',
   `field_group` varchar(255) NOT NULL DEFAULT '1:基础' COMMENT '字段分组',
   `attribute_list` text NULL  COMMENT '属性列表（表的字段）',
+  `attribute_alias` varchar(255) NOT NULL DEFAULT '' COMMENT '属性别名定义',
   `template_list` varchar(100) NOT NULL DEFAULT '' COMMENT '列表模板',
   `template_add` varchar(100) NOT NULL DEFAULT '' COMMENT '新增模板',
   `template_edit` varchar(100) NOT NULL DEFAULT '' COMMENT '编辑模板',
@@ -902,9 +905,9 @@ CREATE TABLE `onethink_model` (
 -- -----------------------------
 -- Records of `onethink_model`
 -- -----------------------------
-INSERT INTO `onethink_model` VALUES ('1', 'document', '基础文档', '0', '', '1', '{\"1\":[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\",\"10\",\"11\",\"12\",\"13\",\"14\",\"15\",\"16\",\"17\",\"18\",\"19\",\"20\",\"21\",\"22\"]}', '1:基础', '', '', '', '', 'id:编号\r\ntitle:标题:article/edit?cate_id=[category_id]&id=[id]\r\ntype:类型\r\nupdate_time:最后更新\r\nstatus:状态\r\nview:浏览\r\nid:操作:[EDIT]&cate_id=[category_id]|编辑,article/setstatus?status=-1&ids=[id]|删除', '0', '', '', '1383891233', '1384507827', '1', 'MyISAM');
-INSERT INTO `onethink_model` VALUES ('2', 'article', '文章', '1', '', '1', '{\"1\":[\"3\",\"24\",\"2\",\"5\"],\"2\":[\"9\",\"13\",\"19\",\"10\",\"12\",\"16\",\"17\",\"26\",\"20\",\"14\",\"11\",\"25\"]}', '1:基础,2:扩展', '', '', '', '', '', '0', '', '', '1383891243', '1387260622', '1', 'MyISAM');
-INSERT INTO `onethink_model` VALUES ('3', 'download', '下载', '1', '', '1', '{\"1\":[\"3\",\"28\",\"30\",\"32\",\"2\",\"5\",\"31\"],\"2\":[\"13\",\"10\",\"27\",\"9\",\"12\",\"16\",\"17\",\"19\",\"11\",\"20\",\"14\",\"29\"]}', '1:基础,2:扩展', '', '', '', '', '', '0', '', '', '1383891252', '1387260449', '1', 'MyISAM');
+INSERT INTO `onethink_model` VALUES ('1', 'document', '基础文档', '0', '', '1', '{\"1\":[\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\",\"10\",\"11\",\"12\",\"13\",\"14\",\"15\",\"16\",\"17\",\"18\",\"19\",\"20\",\"21\",\"22\"]}', '1:基础', '', '','', '', '', 'id:编号\r\ntitle:标题:[EDIT]\r\ntype:类型\r\nupdate_time:最后更新\r\nstatus:状态\r\nview:浏览\r\nid:操作:[EDIT]|编辑,[DELETE]|删除', '0', '', '', '1383891233', '1384507827', '1', 'MyISAM');
+INSERT INTO `onethink_model` VALUES ('2', 'article', '文章', '1', '', '1', '{\"1\":[\"3\",\"24\",\"2\",\"5\"],\"2\":[\"9\",\"13\",\"19\",\"10\",\"12\",\"16\",\"17\",\"26\",\"20\",\"14\",\"11\",\"25\"]}', '1:基础,2:扩展', '','', '', '', '', '', '0', '', '', '1383891243', '1387260622', '1', 'MyISAM');
+INSERT INTO `onethink_model` VALUES ('3', 'download', '下载', '1', '', '1', '{\"1\":[\"3\",\"28\",\"30\",\"32\",\"2\",\"5\",\"31\"],\"2\":[\"13\",\"10\",\"27\",\"9\",\"12\",\"16\",\"17\",\"19\",\"11\",\"20\",\"14\",\"29\"]}', '1:基础,2:扩展', '', '','', '', '', '', '0', '', '', '1383891252', '1387260449', '1', 'MyISAM');
 
 -- -----------------------------
 -- Table structure for `onethink_picture`
@@ -942,10 +945,10 @@ CREATE TABLE `onethink_ucenter_app` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '应用ID',
   `title` varchar(30) NOT NULL COMMENT '应用名称',
   `url` varchar(100) NOT NULL COMMENT '应用URL',
-  `ip` char(15) NOT NULL COMMENT '应用IP',
-  `auth_key` varchar(100) NOT NULL COMMENT '加密KEY',
+  `ip` char(15) NOT NULL DEFAULT '' COMMENT '应用IP',
+  `auth_key` varchar(100) NOT NULL DEFAULT '' COMMENT '加密KEY',
   `sys_login` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '同步登陆',
-  `allow_ip` varchar(255) NOT NULL COMMENT '允许访问的IP',
+  `allow_ip` varchar(255) NOT NULL DEFAULT '' COMMENT '允许访问的IP',
   `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '应用状态',
@@ -963,7 +966,7 @@ CREATE TABLE `onethink_ucenter_member` (
   `username` char(16) NOT NULL COMMENT '用户名',
   `password` char(32) NOT NULL COMMENT '密码',
   `email` char(32) NOT NULL COMMENT '用户邮箱',
-  `mobile` char(15) NOT NULL COMMENT '用户手机',
+  `mobile` char(15) NOT NULL DEFAULT '' COMMENT '用户手机',
   `reg_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
   `reg_ip` bigint(20) NOT NULL DEFAULT '0' COMMENT '注册IP',
   `last_login_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '最后登录时间',
