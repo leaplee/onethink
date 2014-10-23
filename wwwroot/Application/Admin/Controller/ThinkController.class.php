@@ -104,7 +104,9 @@ class ThinkController extends AdminController {
                 ->select();
 
         } else {
-            in_array('id', $fields) || array_push($fields, 'id');
+            if($model['need_pk']){
+                in_array('id', $fields) || array_push($fields, 'id');
+            }
             $name = parse_name(get_table_name($model['id']), true);
             $data = M($name)
                 /* 查询指定字段，不指定则查询所有字段 */
@@ -112,7 +114,7 @@ class ThinkController extends AdminController {
                 // 查询条件
                 ->where($map)
                 /* 默认通过id逆序排列 */
-                ->order('id DESC')
+                ->order($model['need_pk']?'id DESC':'')
                 /* 数据分页 */
                 ->page($page, $row)
                 /* 执行查询 */
@@ -156,6 +158,14 @@ class ThinkController extends AdminController {
         }
     }
 
+    /**
+     * 设置一条或者多条数据的状态
+     * @author huajie <banhuajie@163.com>
+     */
+    public function setStatus($model='Document'){
+        return parent::setStatus($model);
+    }
+    
     public function edit($model = null, $id = 0){
         //获取模型信息
         $model = M('Model')->find($model);

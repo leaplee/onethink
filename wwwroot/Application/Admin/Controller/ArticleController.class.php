@@ -32,9 +32,6 @@ class ArticleController extends AdminController {
      * @author 朱亚杰  <xcoolcc@gmail.com>
      */
     protected function checkDynamic(){
-        if(IS_ROOT){
-            return true;//管理员允许访问任何页面
-        }
         $cates = AuthGroupModel::getAuthCategories(UID);
         switch(strtolower(ACTION_NAME)){
             case 'index':   //文档列表
@@ -54,7 +51,7 @@ class ArticleController extends AdminController {
                 break;
         }
         if(!$cate_id){
-            return null;//不明,需checkRule
+            return null;//不明
         }elseif( !is_array($cate_id) && in_array($cate_id,$cates) ) {
             return true;//有权限
         }elseif( is_array($cate_id) && $cate_id==array_intersect($cate_id,$cates) ){
@@ -62,7 +59,6 @@ class ArticleController extends AdminController {
         }else{
             return false;//无权限
         }
-        return null;//不明,需checkRule
     }
 
     /**
@@ -139,10 +135,11 @@ class ArticleController extends AdminController {
         $this->assign('rightNav',   $nav);
 
         //获取回收站权限
-        $show_recycle = $this->checkRule('Admin/article/recycle');
-        $this->assign('show_recycle', IS_ROOT || $show_recycle);
+        $this->assign('show_recycle', IS_ROOT || $this->checkRule('Admin/article/recycle'));
         //获取草稿箱权限
         $this->assign('show_draftbox', C('OPEN_DRAFTBOX'));
+        //获取审核列表权限
+        $this->assign('show_examine', IS_ROOT || $this->checkRule('Admin/article/examine'));
     }
 
     /**
